@@ -17,6 +17,10 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
+app.use((req, res, next) => {
+  console.log(`Incoming Request: ${req.method} ${req.originalUrl}`);
+  next();  // Continue to the next middleware/route handler
+});
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,

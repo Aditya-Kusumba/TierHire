@@ -280,8 +280,8 @@ const getstats = asyncHandler(async (req, res)=>{
   const id = req.user?.id;
   const s1 = `select count(distinct problem_id) from submissions where candidate_id = $1 and status = 'Accepted'`;
   const s2 = `select count(distinct contest_id) from "Contest_Participations" where candidate_id = $1`
-  const prob = await query(s1, [id]);
-  const cont = await query(s2, [id]);
+  const prob = await query(s1, [id]) || 0;
+  const cont = await query(s2, [id]) || 0;
   const final = {problems : prob.rows[0].count, contests : cont.rows[0].count}
   res.status(200).json(final)
 }

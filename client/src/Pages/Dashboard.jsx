@@ -148,14 +148,13 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [theme, setTheme] = useState('light');
-  const dashboardRef = useRef(null); // 2. Create the ref
+  const dashboardRef = useRef(null);
 
   const toggleTheme = () => {
       setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   useEffect(() => {
-    // 3. Apply the theme to the component's main element using the ref
     if (dashboardRef.current) {
         dashboardRef.current.setAttribute('data-theme', theme);
     }

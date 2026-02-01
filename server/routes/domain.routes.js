@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/", getDomains);
 
 // Get domain by ID
-router.route("/domains").get(verifyJWT, getCandidateDomains)
+router.route("/domains").get(()=>{console.log("Domains")}, verifyJWT, getCandidateDomains)
 router.route("/:domainId").get(verifyJWT, getDomainsById);
 router.route('/:domainId/leaderboard').get(verifyJWT, getDomainLeaderboard)
 export default router;

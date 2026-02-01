@@ -161,7 +161,6 @@ const register = async (username, email, fullName, password, role, company) => {
   }
 };
 
-// ✅ --- Login User ---
 const login = async (credential, password) => {
   try {
     const query = `

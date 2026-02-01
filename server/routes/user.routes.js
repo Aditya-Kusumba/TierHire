@@ -19,6 +19,10 @@ router.route("/me/performancehistory").get(verifyJWT, getPerformanceHistory);
 router.route("/getRecData").get(verifyJWT,getRecData);
 router.route('/job-applications/:domainId').get(verifyJWT, getAppliedJobs);
 router.route('/job-applications').post(verifyJWT, applyForJob);
-router.route('/getstats').get(verifyJWT, getstats);
+router.route('/getstats').get(verifyJWT, (req, res, next) => {
+  console.log("HI");
+  next();
+}, getstats);
+
 
 export default router
