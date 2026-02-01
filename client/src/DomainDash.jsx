@@ -77,7 +77,6 @@ const DomainDash = () => {
                     throw new Error(errorData.message || "Failed to fetch leaderboard");
                 }
                 const result = await response.json();
-                console.log(result.data)
                 setLeaderboard(result.data);
             } catch (err) {
                 // Don't set the main error for a failed leaderboard, just log it

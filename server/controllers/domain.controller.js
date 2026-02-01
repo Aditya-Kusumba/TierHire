@@ -26,10 +26,6 @@ const getDomains = asyncHandler(async (req, res) => {
     );
 });
 
-/**
- * @description Get all domains a specific candidate is enrolled in, with performance stats.
- * @route GET /api/domains/my-domains (Example route)
- */
 const getCandidateDomains = asyncHandler(async (req, res) => {
     const candidateId = req.user?.id;
     
@@ -61,10 +57,7 @@ const getCandidateDomains = asyncHandler(async (req, res) => {
     }
 });
 
-/**
- * @description Get details for a specific domain, the candidate's performance, and relevant jobs.
- * @route GET /api/domains/:domainId
- */
+
 const getDomainsById = asyncHandler(async (req, res) => {
     const { domainId } = req.params;
     const user = req.user;
@@ -118,9 +111,6 @@ const getDomainsById = asyncHandler(async (req, res) => {
         let availableJobs = [];
 
         if (candidatePerformance?.tier_id) {
-            // ✅ WORKAROUND: Removed the JOIN to the Companies table to prevent the crash.
-            // Provides a placeholder for company_name.
-            // The permanent fix is to add a 'company_id' column to the "Jobs" table.
             const jobsQuery = `
             SELECT
                 j.job_id,
@@ -146,12 +136,12 @@ const getDomainsById = asyncHandler(async (req, res) => {
             const jobsResult = await query(jobsQuery, [domainId, candidatePerformance.tier_id]);
             availableJobs = jobsResult.rows;
         }
-        
         const responseData = {
             domainDetails: domainResult.rows[0],
             candidatePerformance: candidatePerformance,
             availableJobs: availableJobs
         };
+        console.log(responseData);
         
         return res.status(200).json(
             new ApiResponse(200, responseData, "Domain, performance, and job data fetched successfully")

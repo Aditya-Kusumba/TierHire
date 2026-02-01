@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   Trophy, 
@@ -17,7 +18,6 @@ import './Dashboard.css';
 const Dashboard = () => {
   const { user } = useAuth();
   const [performance, setPerformance] = useState(0);
-
   // State for general dashboard stats
   const [stats, setStats] = useState({
     totalProblems: 0,
@@ -38,16 +38,12 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/users/getstats');
-      if (!response.ok) throw new Error("Failed to fetch details");
-      const result = await response.json();
-      
-      const { problems, contests } = result;
-
+      const response = await axios.get('/api/users/getstats', { withCredentials: true });
+      const { problems, contests } = response.data;
       setStats({
         totalProblems: 150,
         solvedProblems: problems,
-        contestsParticipated: contests
+        contestsParticipated: contests,
       });
 
       const performance = Math.round(((problems / 150) * 100 + contests * 3.2) * 100) / 100;
@@ -63,7 +59,7 @@ const Dashboard = () => {
         { id: 1, title: 'Weekly Coding Contest', date: 'Tomorrow', time: '2:00 PM' },
         { id: 2, title: 'DSA Challenge', date: 'Friday', time: '6:00 PM' }
       ]);
-      
+
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
     }
@@ -72,14 +68,8 @@ const Dashboard = () => {
   const fetchSelectedDomains = async () => {
     try {
       setDomainsLoading(true);
-      const response = await fetch('/api/domains/domains');
-      console.log(response);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch your domains");
-      }
-      const result = await response.json();
+      const response = await axios.get('/api/domains/domains', {withCredentials : true});
+      const result = await response.data;
       setSelectedDomains(result.data);
     } catch (err) {
       setDomainsError(err.message);
@@ -106,7 +96,7 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <div className="welcome-section">
           <h1 className="dashboard-title">
-            {getGreeting()}, {user?.fullName || user?.username}! 👋
+            {getGreeting()}, {user?.username}! 👋
           </h1>
           <p className="dashboard-subtitle">
             Ready to tackle some coding challenges today?
@@ -199,26 +189,26 @@ const Dashboard = () => {
           <div className="domains-grid">
             {selectedDomains.length > 0 ? (
               selectedDomains.map(domain => (
-                <div key={domain.domainId} className="domain-card card">
+                <div key={domain.domain_id} className="domain-card card">
                   <div className="domain-card-header">
                     <Target size={20} />
-                    <h3 className="domain-card-title">{domain.domainName}</h3>
+                    <h3 className="domain-card-title">{domain.domain_name}</h3>
                   </div>
                   <div className="domain-card-stats">
                     <div className="stat-item">
                       <span className="stat-label">Tier</span>
-                      <span className="stat-value tier">{domain.tierName}</span>
+                      <span className="stat-value tier">{domain.tier_name}</span>
                     </div>
                     <div className="stat-item">
                       <span className="stat-label">Rank</span>
-                      <span className="stat-value">#{domain.rank}</span>
+                      <span className="stat-value">#{domain.current_rank}</span>
                     </div>
                     <div className="stat-item">
                       <span className="stat-label">Score</span>
-                      <span className="stat-value">{domain.totalScore}</span>
+                      <span className="stat-value">{domain.rating}</span>
                     </div>
                   </div>
-                  <Link to={`/domain/${domain.domainId}`} className="btn btn-secondary btn-block">
+                  <Link to={`/domain/${domain.domain_id}`} className="btn btn-secondary btn-block">
                     View Dashboard <ArrowRight size={16} />
                   </Link>
                 </div>

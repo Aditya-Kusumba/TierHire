@@ -66,14 +66,14 @@ const generateAccessAndRefreshToken = async (user) => {
 const updateRefreshToken = async (userId, role, refreshToken) => {
   const tableName = role === "CANDIDATE" ? "Candidates" : "Recruiters";
   try {
-    console.log(await client.query(
+    await client.query(
       `Select refreshtoken from "${tableName}" WHERE "id" = $1`,
       [userId]
-    ));
-    console.log(await client.query(
+    );
+    await client.query(
       `UPDATE "${tableName}" SET "refreshtoken" = $1 WHERE "id" = $2`,
       [refreshToken, userId]
-    ));
+    );
   } catch (err) {
     console.error("Error updating refresh token:", err);
   }

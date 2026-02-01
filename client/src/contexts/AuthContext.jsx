@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
-import api from '../utils/api'; // Your Axios instance
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import api from '../utils/api';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -13,52 +13,75 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [domains, setDomains] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await api.get('/api/users/me', {
+        withCredentials: true
+      });
+      if (res.data?.success) {
+        setUser(res.data.data);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/api/users/register', userData);
-      if (response.data.success) {
-        return { success: true, message: 'Registration successful' };
-      }
-      return { success: false, message: response.data.message };
+      const res = await api.post('/api/users/register', userData);
+      return res.data;
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Registration failed'
+      };
     }
   };
 
-const login = async (credentials) => {
-    try {
-      let response = await api.post('/api/users/login', credentials);
-      response = await response.data;
-      if (response.success) {
-        setUser(response.data.user);
-        return { success: true, user: response.data };
-      }
-      return { success: false, message: response.message || 'Login failed' };
-    } catch (error) {
-      console.log(error);
-      return { success: false, message: error.response?.data?.message || 'Login failed - fatal' };
-    }
-  };
-
- const logout = async () => {
+  const login = async (credentials) => {
   try {
-    console.log("LOGGG OUTTTT")
-    await api.post('/api/users/logout',  {}, {
+    const res = await api.post('/api/users/login', credentials, {
       withCredentials: true
     });
+    if (res.data.success) {
+      // wait a tick for the cookie to be attached
+      await fetchCurrentUser();
+      return { success: true, user: res.data.data.user };
+    }
+    return { success: false, message: res.data.message };
   } catch (error) {
-    console.log('Logout error:', error);
-  } finally {
-    setUser(null);
-    setDomains(null);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Login failed'
+    };
   }
 };
 
+
+  const logout = async () => {
+    try {
+      await api.post('/api/users/logout', {}, { withCredentials: true });
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setUser(null);
+    }
+  };
+
   const value = {
     user,
-    domains,
+    isAuthenticated: !!user,
+    loading,
     login,
     logout,
     register
@@ -66,7 +89,7 @@ const login = async (credentials) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

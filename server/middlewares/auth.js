@@ -8,7 +8,6 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
         let accessToken = req.cookies?.accessToken;
         const refreshToken = req.cookies?.refreshToken;
-        console.log(accessToken, refreshToken);
         if (!refreshToken) {
             throw new ApiError(401, "Unauthorized request: No token provided");
         }
@@ -24,7 +23,6 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
         }
         const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
         let user;
-        console.log(decodedToken.role, decodedToken.userId, decodedToken.role);
         if (decodedToken.role === 'RECRUITER') {
             user = await getRecruiterById(decodedToken?.userId);
         } else if (decodedToken.role === 'CANDIDATE') {

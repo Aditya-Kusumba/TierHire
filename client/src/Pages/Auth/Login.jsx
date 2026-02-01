@@ -35,7 +35,7 @@ const Login = () => {
       const formData1 = {...formData, role : "CANDIDATE"}
       const result = await login(formData1);
       if (result.success){
-        if(user.cvUrl!=null)
+        if(result.user.cvUrl!=null)
           navigate('/dashboard')
         else
           navigate('/updatedashboard');

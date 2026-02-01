@@ -10,16 +10,10 @@ const CandidateDomainsList = () => {
         const response = await fetch(`/api/domains/${domainId}`, {credentials : 'include'});
 
         if (!response.ok) {
-        // Handle HTTP errors like 404 or 500
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to fetch data");
         }
-
-        // This line reads the data stream and parses it as JSON
         const result = await response.json(); 
-
-        console.log(result); // This will now log your meaningful data
-        console.log(result.data);
         navigate(`/domain/${domainId}`);
     }
     const [domains, setDomains] = useState([]);
@@ -76,28 +70,28 @@ const CandidateDomainsList = () => {
                 <div className="listGrid">
                     {domains.map(domain => (
                         // ✅ FIX: Added the unique key prop to the top-level element in the map
-                        <div key={domain.domainId} className="domainCard">
-                            <h3 className="cardTitle">{domain.domainName}</h3>
+                        <div key={domain.domain_id} className="domainCard">
+                            <h3 className="cardTitle">{domain.domain_name}</h3>
                             <p className="domainDescription">{domain.description || 'No description available.'}</p>
                             
                             <div className="statsContainer">
                                 <div className="statItem">
                                     <span className="statLabel">Tier</span>
-                                    <span className="statValue tier">{domain.tierName}</span>
+                                    <span className="statValue tier">{domain.tier_name}</span>
                                 </div>
                                 <div className="statItem">
                                     <span className="statLabel">Rank</span>
-                                    <span className="statValue">#{domain.rank}</span>
+                                    <span className="statValue">#{domain.current_rank}</span>
                                 </div>
                                 <div className="statItem">
                                     <span className="statLabel">Total Score</span>
-                                    <span className="statValue">{domain.totalScore}</span>
+                                    <span className="statValue">{domain.rating}</span>
                                 </div>
                             </div>
 
                             <div className="cardFooter">
                                 <span className={`statusBadge ${domain.status?.toLowerCase()}`}>{domain.status}</span>
-                                <button onClick={() => handleClick(domain.domainId)} className="detailsLink">View Dashboard</button>
+                                <button onClick={() => handleClick(domain.domain_id)} className="detailsLink">View Dashboard</button>
                             </div>
                         </div>
                     ))}
