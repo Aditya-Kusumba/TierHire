@@ -1,3 +1,4 @@
+import { INTEGER } from "sequelize";
 import { query } from "../db.js";
 
 // ============ RECRUITER QUERIES ============
@@ -115,13 +116,14 @@ export const getRecruiterSubscriptionStatus = async (recruiterId, domainId, tier
 
 // Create job post
 export const createJobPost = async (jobData) => {
-  const { recruiter_id, title, description, requirements, location, salary_range, domain_id, tier_id } = jobData;
+  const { recruiter_id, title, description, requirements, location, salary_range, domain_id, target_tier_id } = jobData;
+  const target_tier = (parseInt(domain_id, 10)-1)*3 + target_tier_id;
   const result = await query(`
     INSERT INTO "Jobs" 
     (recruiter_id, title, description, requirements, location, salary_range, domain_id, target_tier_id, status)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'ACTIVE')
     RETURNING *
-  `, [recruiter_id, title, description, requirements, location, salary_range, domain_id, 3]);
+  `, [recruiter_id, title, description, requirements, location, salary_range, domain_id, target_tier]);
   return result.rows[0];
 };
 

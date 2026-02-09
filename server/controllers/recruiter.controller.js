@@ -125,22 +125,17 @@ const postJob = asyncHandler(async (req, res) => {
         is_remote,
         application_deadline
     } = req.body;
-
     // If no company_id is provided by the frontend, set a default value of 1.
     const company_id = await  query(`select company_id from "Companies" where recruiter_id = $1 limit 1`, [recruiterId]);
-    console.log(company_id);
     
     // ✅ FIX: If no target_tier_id is provided, set a default value of 3.
     if (!target_tier_id) {
-        target_tier_id = 3;
+        target_tier_id = 4;
     }
-
-    // Validation for other required fields
     if (!domain_id || !title || !description) {
         throw new ApiError(400, "Missing required fields: domain, title, and description are required.");
     }
-
-    // Re-enabled the tier access check
+    
     const hasAccess = true//await checkTierAccess(recruiterId, target_tier_id);
     if (!hasAccess) {
         throw new ApiError(403, "You do not have access to post jobs for this tier. Please upgrade your subscription.");

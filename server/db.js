@@ -98,7 +98,7 @@ const getUserById = async (userId) => {
 const getRecruiterById=async (userId) => {
   try {
     const query = `
-      SELECT id, username, email, "fullName", 'RECRUITER' AS role
+      SELECT id, username, email, "fullName", 'RECRUITER' AS role, "refreshtoken"
       FROM "Recruiters" WHERE id = $1
       LIMIT 1;
     `;

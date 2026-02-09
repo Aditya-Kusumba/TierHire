@@ -190,8 +190,6 @@ const getRecData = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    // The verifyJWT middleware has already found the user (candidate or recruiter)
-    // and attached them to the request object. We just return it here.
     return res
         .status(200)
         .json(new ApiResponse(200, req.user, "User data fetched successfully"));
@@ -199,10 +197,6 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const getData = asyncHandler(async (req, res) => {
     try {
-        // ❌ WRONG: Don't get id from body on a GET request.
-        // const { id } = req.body; 
-
-        // ✅ CORRECT: Get the authenticated user's ID from the verifyJWT middleware.
         const id = req.user?.id;
 
         if (!id) {
