@@ -45,11 +45,17 @@ const logInUser = asyncHandler(async (req, res) => {
         console.log("User not created")
         throw new ApiError(400, "User doesnot  exisits")
     }
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,       // REQUIRED on Render (HTTPS)
+      sameSite: "None",   // REQUIRED if different origin
+      path: "/",
+    };
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken)
-        .cookie("refreshToken", refreshToken)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
         .json(new ApiResponse(200, {
             user: userobj,
             refreshToken, accessToken
