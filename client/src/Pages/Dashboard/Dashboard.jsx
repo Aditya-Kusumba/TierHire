@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../utils/api';
 import { 
   Trophy, 
   Target, 
@@ -38,7 +39,7 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/api/users/getstats', { withCredentials: true });
+      const response = await api.get('/api/users/getstats', { withCredentials: true });
       const { problems, contests } = response.data;
       setStats({
         totalProblems: 150,
@@ -68,7 +69,7 @@ const Dashboard = () => {
   const fetchSelectedDomains = async () => {
     try {
       setDomainsLoading(true);
-      const response = await axios.get('/api/domains/domains', {withCredentials : true});
+      const response = await api.get('/api/domains/domains', {withCredentials : true});
       const result = await response.data;
       setSelectedDomains(result.data);
     } catch (err) {
