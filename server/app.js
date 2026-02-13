@@ -35,19 +35,6 @@ app.use(cors({
     credentials: true, // allow cookies
 }));
 
-// Handle OPTIONS preflight requests for all routes
-app.options('*', cors({
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    credentials: true,
-}));
 
 app.use(express.json({ limit: "200kb" }));
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
