@@ -20,20 +20,23 @@ const app = express();
 // Configure CORS to handle multiple origins
 const allowedOrigins = process.env.CORS_ORIGIN.split(',').map(origin => origin.trim());
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like curl or mobile apps)
-        if (!origin) return callback(null, true);
+const allowedOrigins = process.env.CORS_ORIGIN.split(',').map(o => o.trim());
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'], // allow all relevant methods
-    credentials: true, // allow cookies
-}));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  }
+
+  // If preflight, return immediately
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+
+  next();
+});
+
 
 
 app.use(express.json({ limit: "200kb" }));
