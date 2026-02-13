@@ -20,8 +20,6 @@ const app = express();
 // Configure CORS to handle multiple origins
 const allowedOrigins = process.env.CORS_ORIGIN.split(',').map(origin => origin.trim());
 
-const allowedOrigins = process.env.CORS_ORIGIN.split(',').map(o => o.trim());
-
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
