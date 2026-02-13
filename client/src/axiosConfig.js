@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configure axios to use the backend URL
 const api = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: 'http://tierhire.onrender.com/',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
